@@ -13,7 +13,7 @@ import internal_tools
 from internal_tools import get_database_connection
 
 
-class ProductDataGenerator(Sequence):
+class OrderCartDataGenerator(Sequence):
     def __init__(
         self,
         client_name: str,
@@ -93,8 +93,8 @@ def get_autoencoder_model(
     x = Dense(2048, activation='relu')(x)
     x = Dense(4096, activation='relu')(x)
 
-    # output
-    output = Dense(n_products, activation='sigmoid')(x)
+    # output. We are using a softmax activation because we are predicting 1 missing product as the task
+    output = Dense(n_products, activation='softmax')(x)
 
     model = Model(input, output)
     model.compile(optimizer='adam', loss="cosine_similarity")
@@ -110,7 +110,7 @@ def train_model(
     # connect to the Proton database and use utility function to generate dictionaries of products
     # each dictionary containes the fields 'product_id', '
     n_products = internal_tools.product_count(client_name)
-    data_generator = ProductDataGenerator(client_name, n_products, batch_size)
+    data_generator = OrderCartDataGenerator(client_name, n_products, batch_size)
     model = get_autoencoder_model(n_products)
     num_training_batches = data_generator.get_num_training_batches()
 
@@ -127,19 +127,25 @@ def train_model(
 def predict_missing_products(
     client_name: str,
     model: tf.keras.models.Model, 
-    product_blobs: List[dict]
+    product_blobs: List[dict],
+    k: int = 10
 ) -> List[dict]:
     """
     Given a list of products and a complete-the-cart model predicts what products are missing from the cart
     """
     n_products = internal_tools.product_count(client_name)
     X = np.zeros(shape=(1, n_products))
+
+    for product_blob in product_blobs:
+        product_index = product_blob['product_index']
+        X[0][product_index] = 1.0
+    
     Y = model.predict(X)
     Y = Y.squeeze() # convert from shape (1, n_products) to (n_products, )
-    predicted_product_indices = Y.nonzero()
+    top_k_indices = Y.argsort()[::-1][:k] # we only want the products corresponding to positions of the top k scores
 
     missing_products = []
-    for index in predicted_product_indices:
+    for index in top_k_indices:
         product_blob = internal_tools.get_index_product(index)
         missing_products.append(product_blob)
     
