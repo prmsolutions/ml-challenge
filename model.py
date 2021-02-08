@@ -109,7 +109,7 @@ def train_model(
 ) -> tf.keras.Model:
     # connect to the Proton database and use utility function to generate dictionaries of products
     # each dictionary containes the fields 'product_id', '
-    n_products = internal_tools.product_count(client_name)
+    n_products = internal_tools.product_count(client_name) # IMPORTANT this number is usually around 300 000, so keep that in mind
     data_generator = OrderCartDataGenerator(client_name, n_products, batch_size)
     model = get_autoencoder_model(n_products)
     num_training_batches = data_generator.get_num_training_batches()
