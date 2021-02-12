@@ -20,6 +20,7 @@ class OrderCartDataGenerator(Sequence):
         n_products: int,
         batch_size: int = 64
     ):  
+        self.client_name = client_name
         self.n_products = n_products
         self.batch_size = batch_size
         self.db = get_database_connection() # establish a connection to our internal database
