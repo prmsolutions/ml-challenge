@@ -35,7 +35,7 @@ class OrderCartDataGenerator(Sequence):
         # In short within each product blob you will find keys such as 
         # 'product_name', 'price', 'product_description', 'product_category', 'manufacturer', 'quantity_purchased', 'purchase_date', 'product_id', 'product_index'
         # the 'product_index' field is unique for each product for a client and represents the position of the product in a virtual array of products
-        # You can check out the FAQ section to see what that look likes in more detail if this is not clear (we totally get that, which is why we have the FAQ)
+        # You can check out the FAQ section in the README to see what that look likes in more detail if this is not clear (we totally get that, which is why we have the FAQ)
 
         order_cart_generator = self.db.get_order_cart_generator(
             client=self.client_name, 
