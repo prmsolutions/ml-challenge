@@ -23,14 +23,14 @@ client's (distributor's) customers.
 To step back a bit, an order cart is a bundle of products bought by one of our **client's** customers. E.g. Daniel's Pizzeria ordered a bundle of products
 from one of our clients. That bundle will be one of the order carts. 
 
-Here's an example of an order cart. Say Daniel's Pizzeria buys two products from one of our clients called Jon The Distributor.
+Here's an example of an order cart. Say Daniel's Pizzeria buys two products from one of **our** clients called Jon The Distributor.
 Those two products are 2 jars of "Anna's Tomato Sauce" and 4 pies of "Bob's Pizza Dough". Here's what that cart might look like
 within the context of the problem.
 
 ```
     {
         "order_id": "1Zef45GH4689990345gHtR",
-        "customer_id": "1111345",
+        "customer_id": "12-daniels_pizzeria-H",
         "order_date": "2021-02-11T18:46:11.785341",
         "products": [
             {
