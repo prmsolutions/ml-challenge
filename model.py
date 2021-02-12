@@ -26,8 +26,15 @@ class OrderCartDataGenerator(Sequence):
 
     def get_next_traininig_batch(self, index):
         """
-        return a tuple cositing of the next-in-sequence input training data and the target data
+        return a tuple cosisting of the next-in-sequence input training data and the target data
         """
+        
+        # the carts or cart blobs in the order_cart_generator are dictionaries and contain a key called "products".
+        # This key contains a list of dictionaries, and each dictionary contains data about a product that was bought in that particular basket
+        # In short within each product blob you will find keys such as 
+        # 'product_name', 'price', 'product_description', 'product_category', 'manufacturer', 'quantity_purchased', 'purchase_date', 'product_id', 'product_index'
+        # the 'product_index' field is unique for each product for a client and represents the position of the product in a virtual array of products
+        # You can check out the FAQ section to see what that look likes in more detail if this is not clear (we totally get that, which is why we have the FAQ)
 
         order_cart_generator = self.db.get_order_cart_generator(
             client=self.client_name, 
@@ -39,11 +46,7 @@ class OrderCartDataGenerator(Sequence):
         X = np.zeros(shape=(self.batch_size, self.n_products))
         Y = np.zeros(shape=(self.batch_size, self.n_products))
         
-        # the carts or "blobs" in the order_cart_generator are dictionaries and contain a key called
-        # 'products' which is a list of dictionaries containing information of each product that was bought in that bundle
-        # each 'product' blob contains the following keys
-        # 'price', 'product_description', 'product_category', 'manufacturer', 'quantity_purchased', 'purchase_date', 'product_id', 'product_index'
-        # the 'product_index' field is unique for each product for a client and represents the position of the product in a virtual array of products
+
 
         for i, cart in enumerate(order_cart_generator):
             products_in_cart = cart['products'] # this will be a list of dictionaries
@@ -57,8 +60,6 @@ class OrderCartDataGenerator(Sequence):
                 X[i][product_index] = 1.0
 
             Y[i][hidden_product_index] = 1.0
-
-        self.current_training_batch_index += 1
 
         return X, Y
 
